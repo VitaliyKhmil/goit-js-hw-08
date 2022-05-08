@@ -16,7 +16,6 @@ const items = galleryItems.map(item => {
     img.setAttribute("alt", item.description);
 
     imgLink.appendChild(img);
-
     return imgLink;
 });
 galery.append(...items);
