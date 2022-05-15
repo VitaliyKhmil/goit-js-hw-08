@@ -2,32 +2,27 @@ import throttle from 'lodash.throttle';
 
 const form = document.querySelector('.feedback-form');
 const formData = {};
+const KEYDATA = 'feedback-form-state';
+Object.keys(formData).forEach(item => (form.elements[item].value = formData[item]));
+
 
 function onFormData(e) {
   formData[e.target.name] = e.target.value;
-  localStorage.setItem('feedback-form-state', JSON.stringify(formData));
-}
-
-function getDataByKey() {
-  return JSON.parse(localStorage.getItem('feedback-form-state'));
+  localStorage.setItem(KEYDATA, JSON.stringify(formData));
 }
 
 function onSubmitForm(e) {
-  console.log(getDataByKey());
   e.preventDefault();
+  const formInputNames = Object.keys(e.currentTarget.elements).filter(item => isNaN(item));
+    if (!formInputNames.every(item => e.currentTarget.elements[item].value)) {
+      alert('Заповніть усі поля форми!');
+      return;
+    }  
   e.currentTarget.reset();
-  localStorage.removeItem('feedback-form-state');
+  console.log(JSON.parse(localStorage.getItem(KEYDATA)));  
+  localStorage.removeItem(KEYDATA);  
 }
-
-(function dataFromLocalStorage() {
-  const data = getDataByKey();
-  const email = document.querySelector('.feedback-form input');
-  const message = document.querySelector('.feedback-form textarea');
-  if (data) {
-    email.value = data.email;
-    message.value = data.message;
-  }
-})();
 
 form.addEventListener('input', throttle(onFormData, 500));
 form.addEventListener('submit', onSubmitForm);
+
